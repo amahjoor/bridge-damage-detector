@@ -37,6 +37,10 @@ const Home = () => {
 
   const sendImageToBackend = async () => {
     try {
+      if (!image) {
+        console.error('No image selected');
+        return;
+      }
       const formData = new FormData();
       formData.append('image', dataURItoBlob(image)); // Convert data URI to Blob
       await axios.post('/api/predict', formData); // Assuming the backend route is '/api/predict'
@@ -45,7 +49,8 @@ const Home = () => {
       console.error('Error sending image to backend:', error);
     }
   };
-
+  
+  
   const dataURItoBlob = (dataURI: string) => {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];

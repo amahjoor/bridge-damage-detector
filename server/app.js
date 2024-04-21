@@ -12,6 +12,11 @@ app.use(cors()); // Enable CORS for all routes
 // Routes
 app.use('/api', predictionRoute); // Mount prediction route
 
+// Handle GET request to the root URL ("/")
+app.get('/', (req, res) => {
+  res.send('Welcome to the Bitcamp 2024 Bridge Analysis App!');
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
