@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.17.0",
+    "axios": "^1.6.8",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.15",
+    "@types/react": "18.2.79",
     "eslint": "^8.5.0",
     "eslint-config-next": "14.2.2",
     "postcss": "^8.4.6",
