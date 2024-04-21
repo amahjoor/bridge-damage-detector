@@ -4,7 +4,9 @@ import "../app/globals.css";
 
 const Home = () => {
   const [image, setImage] = useState<string | null>(null);
+  const [predictions, setPredictions] = useState<any[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showText, setShowText] = useState(false);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -35,22 +37,46 @@ const Home = () => {
     handleImageUpload(file);
   };
 
-  const sendImageToBackend = async () => {
+  const processImage = async () => {
     try {
       if (!image) {
         console.error('No image selected');
         return;
       }
+  
+      // Get your project ID and iteration ID from the Custom Vision project
+      const projectId = '208e9081-a204-49b8-ae65-cd8e6a94a8a4';
+      const iterationId = 'c87022e8-122f-4bb6-9d5d-3fa4c8547c9c';
+  
+      // Construct the URL for Quick Test Image endpoint
+      const endpoint = 'https://bitcamp24cv.cognitiveservices.azure.com/';
+      const predictionUrl = `https://bitcamp24cv-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/208e9081-a204-49b8-ae65-cd8e6a94a8a4/detect/iterations/Iteration4/image`;
+  
+      // Create a FormData object and append the image file
       const formData = new FormData();
       formData.append('image', dataURItoBlob(image)); // Convert data URI to Blob
-      await axios.post('/api/predict', formData); // Assuming the backend route is '/api/predict'
-      // Handle response if needed
+  
+      // Make a POST request to Quick Test Image endpoint
+      const response = await axios.post(predictionUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Prediction-Key': 'REDACTED', // Replace with your prediction key
+        },
+      });
+  
+      // Log the entire response
+      console.log('Response:', response);
+  
+      // Parse the response and extract prediction results
+      const predictions = response.data.predictions;
+      console.log('Prediction results:', predictions);
+      setPredictions(predictions);
     } catch (error) {
-      console.error('Error sending image to backend:', error);
+      console.error('Error processing image:', error);
     }
   };
   
-  
+
   const dataURItoBlob = (dataURI: string) => {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -60,6 +86,10 @@ const Home = () => {
       ia[i] = byteString.charCodeAt(i);
     }
     return new Blob([ab], { type: mimeString });
+  };
+
+  const toggleTextDisplay = () => {
+    setShowText(!showText);
   };
 
   return (
@@ -88,10 +118,29 @@ const Home = () => {
         </div>
       )}
 
-      {/* Button to send image to backend */}
-      <button onClick={sendImageToBackend} disabled={!image} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Send Image to Backend
+      {/* Button to process the uploaded image */}
+      <button onClick={processImage} disabled={!image} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Process Image
       </button>
+
+      {/* Toggle text display button */}
+      <button onClick={toggleTextDisplay} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Refresh
+      </button>
+
+      {/* Display predictions as text */}
+      {showText && (
+        <div className="mt-4">
+          <h2>Predictions:</h2>
+          <ul>
+            {predictions.map((prediction, index) => (
+              <li key={index}>
+                {prediction.tagName}: {prediction.probability.toFixed(2)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </main>
   );
 };

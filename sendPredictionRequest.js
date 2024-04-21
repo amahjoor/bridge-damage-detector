@@ -1,7 +1,8 @@
 const axios = require('axios');
-const fs = require('fs'); // Node.js built-in module for file system operations
+const fs = require('fs');
 
-const imagePath = 'C:/Users/jdcan/Downloads/Images2/main-qimg-afe0fa6985509ee2f317716958a22dc6.jpeg';
+// Specify the correct path to your image file
+const imagePath = 'C:/Users/jdcan/Downloads/Images2/images (3).jpeg';
 
 // Read the image file
 const imageFile = fs.readFileSync(imagePath);
