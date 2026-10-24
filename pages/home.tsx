@@ -44,23 +44,12 @@ const Home = () => {
         return;
       }
   
-      // Get your project ID and iteration ID from the Custom Vision project
-      const projectId = '208e9081-a204-49b8-ae65-cd8e6a94a8a4';
-      const iterationId = 'c87022e8-122f-4bb6-9d5d-3fa4c8547c9c';
-  
-      // Construct the URL for Quick Test Image endpoint
-      const endpoint = 'https://bitcamp24cv.cognitiveservices.azure.com/';
-      const predictionUrl = `https://bitcamp24cv-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/208e9081-a204-49b8-ae65-cd8e6a94a8a4/detect/iterations/Iteration4/image`;
-  
-      // Create a FormData object and append the image file
-      const formData = new FormData();
-      formData.append('image', dataURItoBlob(image)); // Convert data URI to Blob
-  
-      // Make a POST request to Quick Test Image endpoint
-      const response = await axios.post(predictionUrl, formData, {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const imageBlob = dataURItoBlob(image);
+
+      const response = await axios.post(`${apiBase}/api/predict`, imageBlob, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Prediction-Key': 'REDACTED', // Replace with your prediction key
+          'Content-Type': 'application/octet-stream',
         },
       });
   
